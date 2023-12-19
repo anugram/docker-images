@@ -21,6 +21,7 @@ RUN apt-get update \
        python3-setuptools \
        python3-pip \
        python3-yaml \
+       git \
        software-properties-common \
        rsyslog systemd systemd-cron sudo iproute2 \
     && apt-get clean \
@@ -36,7 +37,10 @@ RUN pip3 install $pip_packages
 RUN python3 -m pip install requests
 
 # Install ThalesGroup CipherTrust collection
-RUN ansible-galaxy collection install thalesgroup.ciphertrust
+# RUN ansible-galaxy collection install thalesgroup.ciphertrust
+RUN cd /tmp && git clone https://github.com/ThalesGroup/CDSP-Orchestration-Ansible && git checkout integration-tests-1.0.0 && cd CDSP-Orchestration-Ansible && ansible-galaxy collection build && ansible-galaxy collection install thalesgroup-ciphertrust-1.0.0.tar.gz && cd /tmp && rm -rf CDSP-Orchestration-Ansible
+
+WORKDIR /
 
 # Install bundled role on the host
 RUN mkdir -p /root/.ansible/roles
