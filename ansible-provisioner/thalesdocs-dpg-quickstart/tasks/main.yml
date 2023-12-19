@@ -95,7 +95,7 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ cm_connection_string }}"
     query_param: "name"
-    query_param_value: "{{ char_set_name }}"
+    query_param_value: "{{ dpg_char_set_name }}"
     resource_type: "character-sets"
   register: charset
   ignore_errors: true
@@ -288,5 +288,6 @@
     name: dpg-quick-start
     chart_ref: cdsp/dpg-quick-start
     release_namespace: dpg
+    create_namespace: true
     values_files:
       - /tmp/values.yaml
