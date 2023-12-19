@@ -1,0 +1,269 @@
+---
+# tasks file for thalesdocs-dpg-quickstart
+#
+# (c) 2023 Thales Group. All rights reserved.
+# Author: Anurag Jain, Developer Advocate, Thales
+#
+
+# we will start with cleanup
+# Delete the profile
+- name: "Get Client Profile ID from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: 
+    resource_type: "client-profiles"
+  register: clientProfile
+  ignore_errors: true
+
+- name: "Delete Client Profile"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ clientProfile['response']['id'] }}"
+    resource_type: "client-profiles"
+  ignore_errors: true
+
+# Delete DPG Policy
+- name: "Get DPG Policy from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ dpg_policy_name }}"
+    resource_type: "dpg-policies"
+  register: dpgPolicy
+  ignore_errors: true
+
+- name: "Delete DPG Policy"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ dpgPolicy['response']['id'] }}"
+    resource_type: "dpg-policies"
+  ignore_errors: true
+
+# Delete Access Policy
+- name: "Get Access Policy from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ dpg_access_policy_name }}"
+    resource_type: "access-policies"
+  register: accessPolicy
+  ignore_errors: true
+
+- name: "Delete Access Policy"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ accessPolicy['response']['id'] }}"
+    resource_type: "access-policies"
+  ignore_errors: true
+
+# Delete UserSet
+- name: "Get UserSet from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ dpg_user_set_name }}"
+    resource_type: "user-sets"
+  register: userSet
+  ignore_errors: true
+
+- name: "Delete UserSet"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ userSet['response']['id'] }}"
+    resource_type: "user-sets"
+  ignore_errors: true
+
+# Delete Protection Policy for employee name
+- name: "Delete Protection Policy for Employee Name"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ dpg_cvv_protection_policy }}"
+    resource_type: "protection-policies"
+  ignore_errors: true
+  
+# Delete Protection Policy for credit card
+- name: "Delete Protection Policy for CC"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ dpg_cc_protection_policy }}"
+    resource_type: "protection-policies"
+  ignore_errors: true
+
+# Delete Character Set
+- name: "Get Character Set from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ char_set_name }}"
+    resource_type: "character-sets"
+  register: charset
+  ignore_errors: true
+
+- name: "Delete Character Set"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ charset['response']['id'] }}"
+    resource_type: "character-sets"
+  ignore_errors: true
+
+# Delete NAE Interface
+- name: "Delete Interface"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "nae_all_{{ nae_port_number }}"
+    resource_type: "interfaces"
+  ignore_errors: true
+
+# Get and delete key
+- name: "Get Key ID from its name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ dpg_key_name }}"
+    resource_type: "keys"
+  register: key
+  ignore_errors: true
+
+- name: "Delete Key"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ key['response']['id'] }}"
+    resource_type: "keys"
+  ignore_errors: true
+
+# Now start configuring CM for DPG and our APP APIs
+# get user ID for the admin user as key owner
+- name: "Get user ID from its name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "username"
+    query_param_value: "{{ dpg_key_owner_username }}"
+    resource_type: "users"
+  register: user
+
+- name: "Create Key"
+  thalesgroup.ciphertrust.vault_keys2_save:
+    op_type: create
+    name: "{{ dpg_key_name }}"
+    algorithm: "{{ dpg_key_algo }}"
+    size: "{{ dpg_key_size }}"
+    usageMask: "{{ dpg_key_usage_mask }}"
+    unexportable: false
+    undeletable: false
+    meta:
+      ownerId: "{{ user['response']['id'] }}"
+      versionedKey: true
+    localNode: "{{ cm_connection_string }}"
+  ignore_errors: true
+
+- name: "Create Interface"
+  thalesgroup.ciphertrust.interface_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: create
+    port: "{{ nae_port_number }}"
+    auto_gen_ca_id: "{{ ca_id }}"
+    auto_registration: true
+    allow_unregistered: true
+    cert_user_field: CN
+    interface_type: nae
+    mode: tls-cert-pw-opt
+    network_interface: all
+    trusted_cas:
+      local:
+        - "{{ ca_id }}"
+  ignore_errors: true
+
+- name: "Create Character Set"
+  thalesgroup.ciphertrust.dpg_character_set_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: create
+    name: "{{ dpg_char_set_name }}"
+    range:
+      - 0030-0039
+      - 0041-005A
+      - 0061-007A
+    encoding: UTF-8
+  register: charset
+  
+- name: "Create Protection Policy for employee name"
+  thalesgroup.ciphertrust.dpg_protection_policy_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: create
+    name: "{{ dpg_cvv_protection_policy }}"
+    key: "{{ dpg_key_name }}"
+    tweak: "1628462495815733"
+    tweak_algorithm: "SHA1"
+    algorithm: "FPE/FF1v2/UNICODE"
+    character_set_id: "{{ charset['response']['id'] }}"
+  register: protection_policy_cvv
+
+- name: "Create Protection Policy for Credit Card"
+  thalesgroup.ciphertrust.dpg_protection_policy_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: create
+    name: "{{ dpg_cc_protection_policy }}"
+    key: "{{ dpg_key_name }}"
+    tweak: "9828462495846783"
+    tweak_algorithm: "SHA1"
+    algorithm: "FPE/AES/CARD10"
+  register: protection_policy_cc
+
+- name: "User Set Creation"
+  thalesgroup.ciphertrust.dpg_user_set_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_user_set_name }}"
+    users:
+      - paymentclient
+      - refundclient
+  register: user_set
+
+- name: "Create Access Policy"
+  thalesgroup.ciphertrust.dpg_access_policy_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_access_policy_name }}"
+    default_reveal_type: "Error Replacement Value"
+    default_error_replacement_value: 143001
+    user_set_policy:
+      - reveal_type: Plaintext
+        user_set_id: "{{ user_set['response']['id'] }}"
+  register: access_policy
+
+- name: "Create DPG Policy"
+  thalesgroup.ciphertrust.dpg_policy_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: create
+    name: "{{  dpg_policy_name }}"
+    proxy_config:
+      - api_url: "/api/sample/resource/{id}"
+        json_request_post_tokens:
+          - name: "creditCard.[*].CCNumber"
+            operation: "protect"
+            protection_policy: "{{ dpg_cc_protection_policy }}"
+          - name: "creditCard.[*].cvv"
+            operation: "protect"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+        json_response_get_tokens:
+          - name: "creditCard.[*].cvv"
+            operation: "reveal"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            access_policy: "{{ dpg_access_policy_name }}"
+  register: policy
+
+- name: "Create DPG Client Profile"
+  thalesgroup.ciphertrust.dpg_client_profile_save:
+    name: "{{ cm_connection_string }}"
+    op_type: create
+    app_connector_type: DPG
+    lifetime: 30d
+    cert_duration: 730
+    max_clients: 200
+    ca_id: "{{ ca_id }}"
+    nae_iface_port: "{{ nae_port_number }}"
+    csr_parameters:
+      csr_cn: "{{ dpg_key_owner_username }}"
+    policy_id: "{{ policy['response']['id'] }}"
+    localNode: "{{ cm_connection_string }}"
+  register: profile

@@ -1,0 +1,30 @@
+---
+# defaults file for thalesdocs-dpg-quickstart
+cm_ip: "{{ CM_IP }}"
+cm_private_ip: 10.10.10.10
+cm_username: "{{ CM_USERNAME }}"
+cm_password: "{{ CM_PASSWORD }}"
+
+cm_connection_string:
+  server_ip: "{{ cm_ip }}"
+  server_private_ip: "{{ cm_private_ip }}"
+  server_port: 5432
+  user: "{{ cm_username }}"
+  password: "{{ cm_password }}"
+  verify: False
+  auth_domain_path:
+
+ca_id: "{{ LOCAL_CA_ID }}"
+dpg_client_profile_name: CC_profile
+dpg_policy_name: CC_Policy
+dpg_access_policy_name: cc_access_policy
+dpg_user_set_name: plainttextuserset
+dpg_cvv_protection_policy: cvv_ProtectionPolicy
+dpg_cc_protection_policy: CC_ProtectionPolicy
+dpg_char_set_name: DPGAlphaNum
+nae_port_number: 9005
+dpg_key_name: DPGKey
+dpg_key_owner_username: admin
+dpg_key_size: 256
+dpg_key_algo: aes
+dpg_key_usage_mask: 3145740
