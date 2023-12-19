@@ -28,7 +28,9 @@ RUN apt-get update \
     && rm -Rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man
 RUN sed -i 's/^\($ModLoad imklog\)/#\1/' /etc/rsyslog.conf
-RUN snap install helm --classic
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+RUN chmod 700 get_helm.sh
+RUN ./get_helm.sh
 
 # Fix potential UTF-8 errors with ansible-test.
 RUN locale-gen en_US.UTF-8
