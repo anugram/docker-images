@@ -38,7 +38,7 @@ RUN python3 -m pip install requests
 
 # Install ThalesGroup CipherTrust collection
 # RUN ansible-galaxy collection install thalesgroup.ciphertrust
-RUN cd /tmp && git clone https://github.com/ThalesGroup/CDSP-Orchestration-Ansible.git && git checkout integration-tests-1.0.0 && cd CDSP-Orchestration-Ansible && ansible-galaxy collection build && ansible-galaxy collection install thalesgroup-ciphertrust-1.0.0.tar.gz && cd /tmp && rm -rf CDSP-Orchestration-Ansible
+RUN cd /tmp && git init && git clone https://github.com/ThalesGroup/CDSP-Orchestration-Ansible.git && git checkout integration-tests-1.0.0 && cd CDSP-Orchestration-Ansible && ansible-galaxy collection build && ansible-galaxy collection install thalesgroup-ciphertrust-1.0.0.tar.gz && cd /tmp && rm -rf CDSP-Orchestration-Ansible
 
 WORKDIR /
 
