@@ -33,6 +33,7 @@ RUN locale-gen en_US.UTF-8
 
 # Install Ansible via Pip.
 RUN pip3 install $pip_packages
+RUN python3 -m pip install requests
 
 # Install ThalesGroup CipherTrust collection
 RUN ansible-galaxy collection install thalesgroup.ciphertrust
