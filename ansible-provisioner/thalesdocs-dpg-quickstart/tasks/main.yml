@@ -11,7 +11,7 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ cm_connection_string }}"
     query_param: "name"
-    query_param_value: 
+    query_param_value: "{{ dpg_client_profile_name }}"
     resource_type: "client-profiles"
   register: clientProfile
   ignore_errors: true
@@ -254,7 +254,7 @@
 
 - name: "Create DPG Client Profile"
   thalesgroup.ciphertrust.dpg_client_profile_save:
-    name: "{{ cm_connection_string }}"
+    name: "{{ dpg_client_profile_name }}"
     op_type: create
     app_connector_type: DPG
     lifetime: 30d
@@ -267,3 +267,26 @@
     policy_id: "{{ policy['response']['id'] }}"
     localNode: "{{ cm_connection_string }}"
   register: profile
+
+- name: set vars for helm chart values
+  set_fact:
+    CM_IP: "{{ cm_ip }}"
+    REG_TOKEN: "{{ profile['response']['data']['reg_token'] }}"
+
+- name: "copy values.yaml file to tmp directory"
+  template:
+    src: "values.yaml.j2"
+    dest: "/tmp/values.yaml"
+
+- name: Add CDSP Charts repository
+  kubernetes.core.helm_repository:
+    name: cdsp
+    repo_url: https://anugram.github.io/helm-charts/
+
+- name: Deploy DPG Demo chart using values files in tmp dir
+  kubernetes.core.helm:
+    name: dpg-quick-start
+    chart_ref: cdsp/dpg-quick-start
+    release_namespace: dpg
+    values_files:
+      - /tmp/values.yaml

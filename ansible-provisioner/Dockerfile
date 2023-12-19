@@ -38,11 +38,15 @@ RUN python3 -m pip install requests
 
 # Install ThalesGroup CipherTrust collection
 # RUN ansible-galaxy collection install thalesgroup.ciphertrust
+RUN ansible-galaxy collection install kubernetes.core
 RUN git clone --branch integration-tests-1.0.0 https://github.com/ThalesGroup/CDSP-Orchestration-Ansible.git && cd CDSP-Orchestration-Ansible/ && rm -rf thalesgroup-ciphertrust-1.0.0.tar.gz && ansible-galaxy collection build && ansible-galaxy collection install thalesgroup-ciphertrust-1.0.0.tar.gz
 
 WORKDIR /
 
 RUN rm -rf CDSP-Orchestration-Ansible
+
+# Setup KubeConfig file for Helm
+RUN mkdir -p ~/.kube
 
 # Install bundled role on the host
 RUN mkdir -p /root/.ansible/roles
