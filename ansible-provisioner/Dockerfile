@@ -22,6 +22,7 @@ RUN apt-get update \
        python3-pip \
        python3-yaml \
        git \
+       curl \
        software-properties-common \
        rsyslog systemd systemd-cron sudo iproute2 \
     && apt-get clean \
