@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cte-claim
+  namespace: {{ NAMESPACE }}
+  annotations:
+     csi.cte.cpl.thalesgroup.com/policy: {{ CM_CTE_POLICY }}
+     csi.cte.cpl.thalesgroup.com/source_pvc: nfs-claim
+spec:
+  storageClassName: {{ CM_STORAGE_CLASS }}
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Ki

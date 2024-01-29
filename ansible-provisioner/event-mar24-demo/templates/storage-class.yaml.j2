@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: CM_STORAGE_CLASS
+  namespace: {{ NAMESPACE }}
+provisioner: csi.cte.cpl.thalesgroup.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+parameters:
+  key_manager_addr: {{ CM_IP }}
+  k8_storage_group: {{ CM_STORAGE_GROUP }}
+  registration_token_secret: cte-demo-token
+  registration_period: "10"
