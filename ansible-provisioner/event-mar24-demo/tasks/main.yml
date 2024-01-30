@@ -494,6 +494,11 @@
     src: "cte-pvc.yaml.j2"
     dest: "/tmp/cte-pvc.yaml"
 
+- name: "create Storage Class YAML file from template"
+  template:
+    src: "storage-class.yaml.j2"
+    dest: "/tmp/storage-class.yaml"
+
 - name: "copy values.yaml file to tmp directory"
   template:
     src: "values.yaml.j2"
@@ -508,6 +513,11 @@
   kubernetes.core.k8s:
     state: present
     src: "/tmp/cm-token-secret.yaml"
+
+- name: Create Storage Class
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/storage-class.yaml"
 
 - name: Create NFS PV
   kubernetes.core.k8s:
