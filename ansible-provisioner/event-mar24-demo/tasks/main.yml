@@ -312,7 +312,7 @@
     op_type: create
     name: "{{ storage_group_name }}"
     k8s_namespace: "{{ kubernetes_namespace }}"
-    k8s_storage_class: AnsibleStorageClass
+    k8s_storage_class: ansible-storage-class
     client_profile: DefaultClientProfile
     localNode: "{{ cm_connection_string }}"
   register: _result_create_csi_sg
@@ -463,7 +463,7 @@
   set_fact:
     NAMESPACE: "{{ kubernetes_namespace }}"
     REG_TOKEN_ENCODED: "{{ reg_token_encoded['stdout'] }}"
-    CM_STORAGE_CLASS: AnsibleStorageClass
+    CM_STORAGE_CLASS: ansible-storage-class
     CM_CTE_POLICY: "{{ csi_policy_name }}"
     CM_STORAGE_GROUP: "{{ storage_group_name }}"
     CM_IP: "{{ cm_ip }}"
