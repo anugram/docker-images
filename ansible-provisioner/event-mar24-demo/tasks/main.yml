@@ -54,7 +54,7 @@
 - name: "Delete CTE Resource Set"
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode: "{{ cm_connection_string }}"
-    key: "{{ resourceset['response']['id'] }}"
+    key: "{{ resourceSet['response']['id'] }}"
     resource_type: "resourceset"
   ignore_errors: true
 
@@ -498,6 +498,31 @@
   template:
     src: "values.yaml.j2"
     dest: "/tmp/values.yaml"
+
+- name: Create NameSpace first
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/namespace.yaml"
+
+- name: Create Secret
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/cm-token-secret.yaml"
+
+- name: Create NFS PV
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/nfs-pv.yaml"
+
+- name: Create NFS PVC
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/nfs-pvc.yaml"
+
+- name: Create CTE PVC
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/cte-pvc.yaml"
 
 # - name: Add CDSP Charts repository
 #   kubernetes.core.helm_repository:
