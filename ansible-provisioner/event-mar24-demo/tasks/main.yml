@@ -317,6 +317,15 @@
     localNode: "{{ cm_connection_string }}"
   register: _result_create_csi_sg
 
+- name: "Add CTE Policy to the CSI Storage Group"
+  thalesgroup.ciphertrust.cte_csi_storage_group:
+    op_type: add_guard_point
+    id: "{{ _result_create_csi_sg['response']['id'] }}"
+    policy_list: 
+      - "{{ _result_create_csi_policy['response']['id'] }}"
+    localNode: "{{ cm_connection_string }}"
+  register: _result_create_csi_sg
+
 - name: "Create Registration Token"
   thalesgroup.ciphertrust.cm_regtoken:
     op_type: create

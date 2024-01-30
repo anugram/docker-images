@@ -8,10 +8,11 @@ spec:
       storage: 1Gi
     accessModes:
       -  ReadWriteMany
-    storageClassName: standard
+    storageClassName: nfs
     persistentVolumeReclaimPolicy: Retain
     mountOptions:
         - hard
+        - nfsvers=3.0
     nfs:
-        path: /
+        path: /data/
         server: localhost
