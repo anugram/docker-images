@@ -312,7 +312,7 @@
     op_type: create
     name: "{{ storage_group_name }}"
     k8s_namespace: "{{ kubernetes_namespace }}"
-    k8s_storage_class: ansible-storage-class
+    k8s_storage_class: "{{ storage_class_name }}"
     client_profile: DefaultClientProfile
     localNode: "{{ cm_connection_string }}"
   register: _result_create_csi_sg
@@ -472,7 +472,7 @@
   set_fact:
     NAMESPACE: "{{ kubernetes_namespace }}"
     REG_TOKEN_ENCODED: "{{ reg_token_encoded['stdout'] }}"
-    CM_STORAGE_CLASS: ansible-storage-class
+    CM_STORAGE_CLASS: "{{ storage_class_name }}"
     CM_CTE_POLICY: "{{ csi_policy_name }}"
     CM_STORAGE_GROUP: "{{ storage_group_name }}"
     CM_IP: "{{ cm_ip }}"
@@ -513,35 +513,35 @@
     src: "values.yaml.j2"
     dest: "/tmp/values.yaml"
 
-- name: Create NameSpace first
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/namespace.yaml"
+# - name: Create NameSpace first
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/namespace.yaml"
 
-- name: Create Secret
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/cm-token-secret.yaml"
+# - name: Create Secret
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/cm-token-secret.yaml"
 
-- name: Create Storage Class
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/storage-class.yaml"
+# - name: Create Storage Class
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/storage-class.yaml"
 
-- name: Create NFS PV
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/nfs-pv.yaml"
+# - name: Create NFS PV
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/nfs-pv.yaml"
 
-- name: Create NFS PVC
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/nfs-pvc.yaml"
+# - name: Create NFS PVC
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/nfs-pvc.yaml"
 
-- name: Create CTE PVC
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/cte-pvc.yaml"
+# - name: Create CTE PVC
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/cte-pvc.yaml"
 
 # - name: Add CDSP Charts repository
 #   kubernetes.core.helm_repository:
