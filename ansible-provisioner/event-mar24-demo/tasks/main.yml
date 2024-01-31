@@ -277,6 +277,14 @@
         file: "*"
         include_subfolders: true
         hdfs: false
+      - directory: "/data"
+        file: "*"
+        include_subfolders: true
+        hdfs: false
+      - directory: "/data/cte"
+        file: "*"
+        include_subfolders: true
+        hdfs: false
     localNode: "{{ cm_connection_string }}"
   register: _result_create_rs
 
