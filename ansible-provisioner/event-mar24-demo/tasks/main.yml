@@ -349,7 +349,16 @@
   register: reg_token_encoded
 
 # Now configure CM for DPG and our APP APIs
-# get user ID for the admin user as key owner
+# Get the masking format ID for access policy
+- name: "Get masket format ID"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "SHOW_LAST_FOUR"
+    resource_type: "masking-formats"
+  register: masking-format
+  ignore_errors: true
+
 - name: "Create Key"
   thalesgroup.ciphertrust.vault_keys2_save:
     op_type: create
@@ -394,7 +403,7 @@
     encoding: UTF-8
   register: charset
   
-- name: "Create Protection Policy for employee name"
+- name: "Create Protection Policy for non-Card data"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode: "{{ cm_connection_string }}"
     op_type: create
@@ -406,7 +415,7 @@
     character_set_id: "{{ charset['response']['id'] }}"
   register: protection_policy_cvv
 
-- name: "Create Protection Policy for Credit Card"
+- name: "Create Protection Policy for Card data"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode: "{{ cm_connection_string }}"
     op_type: create
@@ -417,26 +426,36 @@
     algorithm: "FPE/AES/CARD10"
   register: protection_policy_cc
 
-- name: "User Set Creation"
+- name: "User Set for masked info"
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode: "{{ cm_connection_string }}"
     op_type: "create"
     name: "{{ dpg_user_set_name }}"
     users:
-      - paymentclient
-      - refundclient
-  register: user_set
+      - operator
+  register: user_set_masked
+
+- name: "User Set for plaintext"
+  thalesgroup.ciphertrust.dpg_user_set_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_user_set_name }}"
+    users:
+      - owner
+  register: user_set_plain
 
 - name: "Create Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode: "{{ cm_connection_string }}"
     op_type: "create"
     name: "{{ dpg_access_policy_name }}"
-    default_reveal_type: "Error Replacement Value"
-    default_error_replacement_value: 143001
+    default_reveal_type: "Ciphertext"
     user_set_policy:
       - reveal_type: Plaintext
-        user_set_id: "{{ user_set['response']['id'] }}"
+        user_set_id: "{{ user_set_plain['response']['id'] }}"
+      - reveal_type: "Masked Value"
+        user_set_id: "{{ user_set_masked['response']['id'] }}"
+        masking-format: "{{ masking-format['response']['id'] }}"
   register: access_policy
 
 - name: "Create DPG Policy"
@@ -445,16 +464,44 @@
     op_type: create
     name: "{{  dpg_policy_name }}"
     proxy_config:
-      - api_url: "/api/sample/resource/{id}"
+      - api_url: "/api/payment-info"
         json_request_post_tokens:
-          - name: "creditCard.[*].CCNumber"
+          - name: "cc"
             operation: "protect"
             protection_policy: "{{ dpg_cc_protection_policy }}"
-          - name: "creditCard.[*].cvv"
+          - name: "cvv"
+            operation: "protect"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+          - name: "zip"
             operation: "protect"
             protection_policy: "{{ dpg_cvv_protection_policy }}"
         json_response_get_tokens:
-          - name: "creditCard.[*].cvv"
+          - name: "data.[*].cc"
+            operation: "reveal"
+            protection_policy: "{{ dpg_cc_protection_policy }}"
+            access_policy: "{{ dpg_access_policy_name }}"
+          - name: "data.[*].cvv"
+            operation: "reveal"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            access_policy: "{{ dpg_access_policy_name }}"
+          - name: "data.[*].zip"
+            operation: "reveal"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            access_policy: "{{ dpg_access_policy_name }}"
+      - api_url: "/api/health-info/add"
+        json_request_post_tokens:
+          - name: "healthCardNum"
+            operation: "protect"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+          - name: "zip"
+            operation: "protect"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+        json_response_get_tokens:
+          - name: "data.[*].healthCardNum"
+            operation: "reveal"
+            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            access_policy: "{{ dpg_access_policy_name }}"
+          - name: "data.[*].zip"
             operation: "reveal"
             protection_policy: "{{ dpg_cvv_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
@@ -473,6 +520,11 @@
     csr_parameters:
       csr_cn: "{{ dpg_key_owner_username }}"
     policy_id: "{{ policy['response']['id'] }}"
+    tls_to_appserver:
+      tls_skip_verify: true
+      tls_enabled: false
+    auth_method_used:
+      scheme_name: Basic
     localNode: "{{ cm_connection_string }}"
   register: profile
 
@@ -521,35 +573,35 @@
     src: "values.yaml.j2"
     dest: "/tmp/values.yaml"
 
-# - name: Create NameSpace first
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/namespace.yaml"
+- name: Create NameSpace first
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/namespace.yaml"
 
-# - name: Create Secret
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/cm-token-secret.yaml"
+- name: Create Secret
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/cm-token-secret.yaml"
 
-# - name: Create Storage Class
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/storage-class.yaml"
+- name: Create Storage Class
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/storage-class.yaml"
 
-# - name: Create NFS PV
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/nfs-pv.yaml"
+- name: Create NFS PV
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/nfs-pv.yaml"
 
-# - name: Create NFS PVC
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/nfs-pvc.yaml"
+- name: Create NFS PVC
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/nfs-pvc.yaml"
 
-# - name: Create CTE PVC
-#   kubernetes.core.k8s:
-#     state: present
-#     src: "/tmp/cte-pvc.yaml"
+- name: Create CTE PVC
+  kubernetes.core.k8s:
+    state: present
+    src: "/tmp/cte-pvc.yaml"
 
 # - name: Add CDSP Charts repository
 #   kubernetes.core.helm_repository:
