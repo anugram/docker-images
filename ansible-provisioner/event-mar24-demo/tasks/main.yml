@@ -356,7 +356,7 @@
     query_param: "name"
     query_param_value: "SHOW_LAST_FOUR"
     resource_type: "masking-formats"
-  register: masking-format
+  register: masking_format
   ignore_errors: true
 
 - name: "Create Key"
@@ -402,11 +402,27 @@
       - 0061-007A
     encoding: UTF-8
   register: charset
+
+- name: "Create Access Policy"
+  thalesgroup.ciphertrust.dpg_access_policy_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_access_policy_name }}"
+    default_reveal_type: "Ciphertext"
+    user_set_policy:
+      - reveal_type: Plaintext
+        user_set_id: "{{ user_set_plain['response']['id'] }}"
+      - reveal_type: "Masked Value"
+        user_set_id: "{{ user_set_masked['response']['id'] }}"
+        masking-format: "{{ masking_format['response']['id'] }}"
+  register: access_policy
   
 - name: "Create Protection Policy for non-Card data"
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode: "{{ cm_connection_string }}"
     op_type: create
+    access_policy_name: "{{ dpg_access_policy_name }}"
+    masking_format_id: "{{ masking_format['response']['id'] }}"
     name: "{{ dpg_cvv_protection_policy }}"
     key: "{{ dpg_key_name }}"
     tweak: "1628462495815733"
@@ -419,6 +435,8 @@
   thalesgroup.ciphertrust.dpg_protection_policy_save:
     localNode: "{{ cm_connection_string }}"
     op_type: create
+    access_policy_name: "{{ dpg_access_policy_name }}"
+    masking_format_id: "{{ masking_format['response']['id'] }}"
     name: "{{ dpg_cc_protection_policy }}"
     key: "{{ dpg_key_name }}"
     tweak: "9828462495846783"
@@ -443,20 +461,6 @@
     users:
       - owner
   register: user_set_plain
-
-- name: "Create Access Policy"
-  thalesgroup.ciphertrust.dpg_access_policy_save:
-    localNode: "{{ cm_connection_string }}"
-    op_type: "create"
-    name: "{{ dpg_access_policy_name }}"
-    default_reveal_type: "Ciphertext"
-    user_set_policy:
-      - reveal_type: Plaintext
-        user_set_id: "{{ user_set_plain['response']['id'] }}"
-      - reveal_type: "Masked Value"
-        user_set_id: "{{ user_set_masked['response']['id'] }}"
-        masking-format: "{{ masking-format['response']['id'] }}"
-  register: access_policy
 
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
