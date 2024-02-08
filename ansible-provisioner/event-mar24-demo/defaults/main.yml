@@ -25,7 +25,8 @@ ca_id: "146b5095-8f9b-47c6-a43c-a6ee4b58b23b"
 dpg_client_profile_name: CC_profile
 dpg_policy_name: CC_Policy
 dpg_access_policy_name: cc_access_policy
-dpg_user_set_name: plainttextuserset
+dpg_plaintext_user_set_name: plainttextuserset
+dpg_masked_user_set_name: maskeduserset
 dpg_cvv_protection_policy: cvv_ProtectionPolicy
 dpg_cc_protection_policy: CC_ProtectionPolicy
 dpg_char_set_name: DPGAlphaNum

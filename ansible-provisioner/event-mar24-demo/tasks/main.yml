@@ -144,19 +144,35 @@
   ignore_errors: true
 
 # Delete UserSet
-- name: "Get UserSet from Name"
+- name: "Get PlainText UserSet from Name"
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ cm_connection_string }}"
     query_param: "name"
-    query_param_value: "{{ dpg_user_set_name }}"
+    query_param_value: "{{ dpg_plaintext_user_set_name }}"
     resource_type: "user-sets"
-  register: userSet
+  register: userset_plaintext
   ignore_errors: true
 
 - name: "Delete UserSet"
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode: "{{ cm_connection_string }}"
-    key: "{{ userSet['response']['id'] }}"
+    key: "{{ userset_plaintext['response']['id'] }}"
+    resource_type: "user-sets"
+  ignore_errors: true
+
+- name: "Get Masked UserSet from Name"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ dpg_masked_user_set_name }}"
+    resource_type: "user-sets"
+  register: userset_masked
+  ignore_errors: true
+
+- name: "Delete UserSet"
+  thalesgroup.ciphertrust.cm_resource_delete:
+    localNode: "{{ cm_connection_string }}"
+    key: "{{ userset_masked['response']['id'] }}"
     resource_type: "user-sets"
   ignore_errors: true
 
@@ -407,7 +423,7 @@
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode: "{{ cm_connection_string }}"
     op_type: "create"
-    name: "{{ dpg_user_set_name }}"
+    name: "{{ dpg_masked_user_set_name }}"
     users:
       - operator
   register: user_set_masked
@@ -416,7 +432,7 @@
   thalesgroup.ciphertrust.dpg_user_set_save:
     localNode: "{{ cm_connection_string }}"
     op_type: "create"
-    name: "{{ dpg_user_set_name }}"
+    name: "{{ dpg_plaintext_user_set_name }}"
     users:
       - owner
   register: user_set_plain
