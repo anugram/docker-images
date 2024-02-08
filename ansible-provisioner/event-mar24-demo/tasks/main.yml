@@ -461,7 +461,7 @@
     key: "{{ dpg_key_name }}"
     tweak: "1628462495815733"
     tweak_algorithm: "SHA1"
-    algorithm: "FPE/FF1v2/UNICODE"
+    algorithm: "FPE/AES"
     character_set_id: "{{ charset['response']['id'] }}"
   register: protection_policy_cvv
 
@@ -475,7 +475,7 @@
     key: "{{ dpg_key_name }}"
     tweak: "9828462495846783"
     tweak_algorithm: "SHA1"
-    algorithm: "FPE/AES/CARD10"
+    algorithm: "FPE/AES"
   register: protection_policy_cc
 
 - name: "Create DPG Policy"
