@@ -448,7 +448,7 @@
         user_set_id: "{{ user_set_plain['response']['id'] }}"
       - reveal_type: "Masked Value"
         user_set_id: "{{ user_set_masked['response']['id'] }}"
-        masking-format: "{{ masking_format['response']['id'] }}"
+        masking_format_id: "{{ masking_format['response']['id'] }}"
   register: access_policy
   
 - name: "Create Protection Policy for non-Card data"
