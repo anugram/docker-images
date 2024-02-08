@@ -403,6 +403,24 @@
     encoding: UTF-8
   register: charset
 
+- name: "User Set for masked info"
+  thalesgroup.ciphertrust.dpg_user_set_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_user_set_name }}"
+    users:
+      - operator
+  register: user_set_masked
+
+- name: "User Set for plaintext"
+  thalesgroup.ciphertrust.dpg_user_set_save:
+    localNode: "{{ cm_connection_string }}"
+    op_type: "create"
+    name: "{{ dpg_user_set_name }}"
+    users:
+      - owner
+  register: user_set_plain
+
 - name: "Create Access Policy"
   thalesgroup.ciphertrust.dpg_access_policy_save:
     localNode: "{{ cm_connection_string }}"
@@ -443,24 +461,6 @@
     tweak_algorithm: "SHA1"
     algorithm: "FPE/AES/CARD10"
   register: protection_policy_cc
-
-- name: "User Set for masked info"
-  thalesgroup.ciphertrust.dpg_user_set_save:
-    localNode: "{{ cm_connection_string }}"
-    op_type: "create"
-    name: "{{ dpg_user_set_name }}"
-    users:
-      - operator
-  register: user_set_masked
-
-- name: "User Set for plaintext"
-  thalesgroup.ciphertrust.dpg_user_set_save:
-    localNode: "{{ cm_connection_string }}"
-    op_type: "create"
-    name: "{{ dpg_user_set_name }}"
-    users:
-      - owner
-  register: user_set_plain
 
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
