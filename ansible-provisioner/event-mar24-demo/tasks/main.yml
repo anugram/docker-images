@@ -177,18 +177,18 @@
   ignore_errors: true
 
 # Delete Protection Policy for employee name
-- name: "Delete Protection Policy for Employee Name"
-  thalesgroup.ciphertrust.cm_resource_delete:
-    localNode: "{{ cm_connection_string }}"
-    key: "{{ dpg_cvv_protection_policy }}"
-    resource_type: "protection-policies"
-  ignore_errors: true
+# - name: "Delete Protection Policy for Employee Name"
+#   thalesgroup.ciphertrust.cm_resource_delete:
+#     localNode: "{{ cm_connection_string }}"
+#     key: "{{ dpg_cvv_protection_policy }}"
+#     resource_type: "protection-policies"
+#   ignore_errors: true
   
-# Delete Protection Policy for credit card
-- name: "Delete Protection Policy for CC"
+# Delete Protection Policy
+- name: "Delete Protection Policy"
   thalesgroup.ciphertrust.cm_resource_delete:
     localNode: "{{ cm_connection_string }}"
-    key: "{{ dpg_cc_protection_policy }}"
+    key: "{{ dpg_protection_policy }}"
     resource_type: "protection-policies"
   ignore_errors: true
 
@@ -370,7 +370,7 @@
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ cm_connection_string }}"
     query_param: "name"
-    query_param_value: "SHOW_LAST_FOUR"
+    query_param_value: "LAST_FOUR"
     resource_type: "masking-formats"
   register: masking_format
   ignore_errors: true
@@ -457,26 +457,26 @@
     op_type: create
     access_policy_name: "{{ dpg_access_policy_name }}"
     masking_format_id: "{{ masking_format['response']['id'] }}"
-    name: "{{ dpg_cvv_protection_policy }}"
+    name: "{{ dpg_protection_policy }}"
     key: "{{ dpg_key_name }}"
     tweak: "1628462495815733"
     tweak_algorithm: "SHA1"
-    algorithm: "FPE/AES"
+    algorithm: "FPE/AES/UNICODE"
     character_set_id: "{{ charset['response']['id'] }}"
-  register: protection_policy_cvv
+  register: protection_policy
 
-- name: "Create Protection Policy for Card data"
-  thalesgroup.ciphertrust.dpg_protection_policy_save:
-    localNode: "{{ cm_connection_string }}"
-    op_type: create
-    access_policy_name: "{{ dpg_access_policy_name }}"
-    masking_format_id: "{{ masking_format['response']['id'] }}"
-    name: "{{ dpg_cc_protection_policy }}"
-    key: "{{ dpg_key_name }}"
-    tweak: "9828462495846783"
-    tweak_algorithm: "SHA1"
-    algorithm: "FPE/AES"
-  register: protection_policy_cc
+# - name: "Create Protection Policy for Card data"
+#   thalesgroup.ciphertrust.dpg_protection_policy_save:
+#     localNode: "{{ cm_connection_string }}"
+#     op_type: create
+#     access_policy_name: "{{ dpg_access_policy_name }}"
+#     masking_format_id: "{{ masking_format['response']['id'] }}"
+#     name: "{{ dpg_cc_protection_policy }}"
+#     key: "{{ dpg_key_name }}"
+#     tweak: "9828462495846783"
+#     tweak_algorithm: "SHA1"
+#     algorithm: "FPE/AES/UNICODE"
+#   register: protection_policy_cc
 
 - name: "Create DPG Policy"
   thalesgroup.ciphertrust.dpg_policy_save:
@@ -488,42 +488,42 @@
         json_request_post_tokens:
           - name: "cc"
             operation: "protect"
-            protection_policy: "{{ dpg_cc_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
           - name: "cvv"
             operation: "protect"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
           - name: "zip"
             operation: "protect"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
         json_response_get_tokens:
           - name: "data.[*].cc"
             operation: "reveal"
-            protection_policy: "{{ dpg_cc_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
           - name: "data.[*].cvv"
             operation: "reveal"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
           - name: "data.[*].zip"
             operation: "reveal"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
       - api_url: "/api/health-info/add"
         json_request_post_tokens:
           - name: "healthCardNum"
             operation: "protect"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
           - name: "zip"
             operation: "protect"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
         json_response_get_tokens:
           - name: "data.[*].healthCardNum"
             operation: "reveal"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
           - name: "data.[*].zip"
             operation: "reveal"
-            protection_policy: "{{ dpg_cvv_protection_policy }}"
+            protection_policy: "{{ dpg_protection_policy }}"
             access_policy: "{{ dpg_access_policy_name }}"
   register: policy
 
