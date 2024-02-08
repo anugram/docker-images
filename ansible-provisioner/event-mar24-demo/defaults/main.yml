@@ -36,3 +36,5 @@ dpg_key_owner_username: admin
 dpg_key_size: 256
 dpg_key_algo: aes
 dpg_key_usage_mask: 3145740
+masking_format_dynamic: "SHOW_LAST_FOUR"
+masking_format_static: "LAST_FOUR"

@@ -366,13 +366,22 @@
 
 # Now configure CM for DPG and our APP APIs
 # Get the masking format ID for access policy
-- name: "Get masket format ID"
+- name: "Get dynamic masket format ID"
   thalesgroup.ciphertrust.cm_resource_get_id_from_name:
     localNode: "{{ cm_connection_string }}"
     query_param: "name"
-    query_param_value: "LAST_FOUR"
+    query_param_value: "{{ masking_format_dynamic }}"
     resource_type: "masking-formats"
-  register: masking_format
+  register: masking_format_dynamic
+  ignore_errors: true
+
+- name: "Get static masket format ID"
+  thalesgroup.ciphertrust.cm_resource_get_id_from_name:
+    localNode: "{{ cm_connection_string }}"
+    query_param: "name"
+    query_param_value: "{{ masking_format_static }}"
+    resource_type: "masking-formats"
+  register: masking_format_static
   ignore_errors: true
 
 - name: "Create Key"
@@ -448,7 +457,7 @@
         user_set_id: "{{ user_set_plain['response']['id'] }}"
       - reveal_type: "Masked Value"
         user_set_id: "{{ user_set_masked['response']['id'] }}"
-        masking_format_id: "{{ masking_format['response']['id'] }}"
+        masking_format_id: "{{ masking_format_dynamic['response']['id'] }}"
   register: access_policy
   
 - name: "Create Protection Policy for non-Card data"
@@ -456,7 +465,7 @@
     localNode: "{{ cm_connection_string }}"
     op_type: create
     access_policy_name: "{{ dpg_access_policy_name }}"
-    masking_format_id: "{{ masking_format['response']['id'] }}"
+    masking_format_id: "{{ masking_format_static['response']['id'] }}"
     name: "{{ dpg_protection_policy }}"
     key: "{{ dpg_key_name }}"
     tweak: "1628462495815733"
@@ -543,8 +552,9 @@
     tls_to_appserver:
       tls_skip_verify: true
       tls_enabled: false
-    auth_method_used:
-      scheme_name: Basic
+    configurations:
+      auth_method_used:
+        scheme_name: Basic
     localNode: "{{ cm_connection_string }}"
   register: profile
 
