@@ -548,13 +548,13 @@
     nae_iface_port: "{{ nae_port_number }}"
     csr_parameters:
       csr_cn: "{{ dpg_key_owner_username }}"
-    policy_id: "{{ policy['response']['id'] }}"
-    tls_to_appserver:
-      tls_skip_verify: true
-      tls_enabled: false
+    policy_id: "{{ policy['response']['id'] }}"    
     configurations:
       auth_method_used:
         scheme_name: Basic
+      tls_to_appserver:
+        tls_skip_verify: true
+        tls_enabled: false
     localNode: "{{ cm_connection_string }}"
   register: profile
 

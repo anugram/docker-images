@@ -1,0 +1,34 @@
+runlabel: uideployment
+
+deployment:
+  name: ui-deployment
+  appimagename: demo-ui
+  replicas: 1
+  appimage: localhost:5000/unified-demo-ui
+
+service:
+  name: uisvc
+  type: NodePort
+  uiappname: ui-port
+  uiappnodePort: 32080
+  uiappPort: 3000
+  uiapptargetPort: 3000
+
+configuration:
+  api_server_ip: {{ BACKEND_IP }}
+  api_server_port: {{ BACKEND_PORT }}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+ingress:
+  enabled: true
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80

@@ -1,0 +1,43 @@
+runlabel: apideployment
+
+deployment:
+  name: api-deployment
+  appimagename: demo-api
+  dpgimagename: dpg-container
+  replicas: 1
+  appimage: localhost:5000/unified-demo-api
+  dpgimage: thalesciphertrust/ciphertrust-data-protection-gateway:latest
+
+service:
+  name: apisvc
+  type: NodePort
+  appname: api-port
+  appnodePort: 32081
+  appPort: 8081
+  apptargetPort: 8081
+
+configuration:
+  secretname: dpg-secret
+  configmapname: dpg-configmap
+  kms: {{ CM_IP }}
+  appurl: http://localhost:8080
+  tlsenabled: false
+  reg_token: {{ REG_TOKEN }}
+  
+  servercrt: crt
+  serverkey: key
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+ingress:
+  enabled: true
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
