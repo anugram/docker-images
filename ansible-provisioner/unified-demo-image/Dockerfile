@@ -54,8 +54,8 @@ RUN mkdir -p ~/.kube
 
 # Install bundled role on the host
 RUN mkdir -p /root/.ansible/roles
-ADD thalesdocs-dpg-quickstart /root/.ansible/roles/thalesdocs-dpg-quickstart
-COPY dpg_quick_start_demo.yml /root
+ADD event-mar24-demo /root/.ansible/roles/event-mar24-demo
+COPY run_demo.yml /root
 
 COPY initctl_faker .
 RUN chmod +x initctl_faker && rm -fr /sbin/initctl && ln -s /initctl_faker /sbin/initctl
