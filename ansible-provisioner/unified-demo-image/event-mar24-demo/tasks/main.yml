@@ -600,8 +600,8 @@
 
 - name: "copy values.yaml file to tmp directory"
   template:
-    src: "values.yaml.j2"
-    dest: "/tmp/values.yaml"
+    src: "values_api.yaml.j2"
+    dest: "/tmp/values_api.yaml"
 
 - name: Create NameSpace first
   kubernetes.core.k8s:
@@ -633,16 +633,16 @@
     state: present
     src: "/tmp/cte-pvc.yaml"
 
-# - name: Add CDSP Charts repository
-#   kubernetes.core.helm_repository:
-#     name: cdsp
-#     repo_url: https://anugram.github.io/helm-charts/
+- name: Add CDSP Charts repository
+  kubernetes.core.helm_repository:
+    name: cdsp
+    repo_url: https://anugram.github.io/helm-charts/
 
-# - name: Deploy DPG Demo chart using values files in tmp dir
-#   kubernetes.core.helm:
-#     name: dpg-quick-start
-#     chart_ref: cdsp/dpg-quick-start
-#     release_namespace: dpg
-#     create_namespace: true
-#     values_files:
-#       - /tmp/values.yaml
+- name: Deploy DPG Demo chart using values files in tmp dir
+  kubernetes.core.helm:
+    name: kubecon-demo-api
+    chart_ref: cdsp/demo-cte-dpg-secrets-api
+    release_namespace: "{{ kubernetes_namespace }}"
+    create_namespace: true
+    values_files:
+      - /tmp/values_api.yaml
