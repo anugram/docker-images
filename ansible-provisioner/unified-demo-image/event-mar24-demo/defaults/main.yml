@@ -21,7 +21,7 @@ cte_policy_key_name: cte-key
 kubernetes_namespace: kubecon
 storage_class_name: ansible-storage-class
 
-ca_id: "50e566a1-9cff-4787-9741-d4f545f7657f"
+ca_id: "{{ LOCAL_CA_ID }}"
 dpg_client_profile_name: CC_profile
 dpg_policy_name: CC_Policy
 dpg_access_policy_name: cc_access_policy
@@ -38,3 +38,5 @@ dpg_key_algo: aes
 dpg_key_usage_mask: 3145740
 masking_format_dynamic: "SHOW_LAST_FOUR"
 masking_format_static: "LAST_FOUR"
+
+add_dpg_flag: "{{ ADD_DPG_FLAG }}"

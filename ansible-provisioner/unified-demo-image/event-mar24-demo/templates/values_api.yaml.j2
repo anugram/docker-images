@@ -17,7 +17,7 @@ service:
   apiapptargetPort: 8080
 
 configuration:
-  addSideContainer: false
+  addSideContainer: {{ ADD_DPG_FLAG }}
   secretname: dpg-secret
   configmapname: dpg-configmap
   kms: {{ CM_IP }}

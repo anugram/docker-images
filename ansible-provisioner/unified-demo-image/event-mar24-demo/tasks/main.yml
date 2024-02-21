@@ -603,46 +603,46 @@
     src: "values_api.yaml.j2"
     dest: "/tmp/values_api.yaml"
 
-- name: Create NameSpace first
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/namespace.yaml"
+# - name: Create NameSpace first
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/namespace.yaml"
 
-- name: Create Secret
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/cm-token-secret.yaml"
+# - name: Create Secret
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/cm-token-secret.yaml"
 
-- name: Create Storage Class
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/storage-class.yaml"
+# - name: Create Storage Class
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/storage-class.yaml"
 
-- name: Create NFS PV
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/nfs-pv.yaml"
+# - name: Create NFS PV
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/nfs-pv.yaml"
 
-- name: Create NFS PVC
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/nfs-pvc.yaml"
+# - name: Create NFS PVC
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/nfs-pvc.yaml"
 
-- name: Create CTE PVC
-  kubernetes.core.k8s:
-    state: present
-    src: "/tmp/cte-pvc.yaml"
+# - name: Create CTE PVC
+#   kubernetes.core.k8s:
+#     state: present
+#     src: "/tmp/cte-pvc.yaml"
 
-- name: Add CDSP Charts repository
-  kubernetes.core.helm_repository:
-    name: cdsp
-    repo_url: https://anugram.github.io/helm-charts/
+# - name: Add CDSP Charts repository
+#   kubernetes.core.helm_repository:
+#     name: cdsp
+#     repo_url: https://anugram.github.io/helm-charts/
 
-- name: Deploy DPG Demo chart using values files in tmp dir
-  kubernetes.core.helm:
-    name: kubecon-demo-api
-    chart_ref: cdsp/demo-cte-dpg-secrets-api
-    release_namespace: "{{ kubernetes_namespace }}"
-    create_namespace: true
-    values_files:
-      - /tmp/values_api.yaml
+# - name: Deploy DPG Demo chart using values files in tmp dir
+#   kubernetes.core.helm:
+#     name: kubecon-demo-api
+#     chart_ref: cdsp/demo-cte-dpg-secrets-api
+#     release_namespace: "{{ kubernetes_namespace }}"
+#     create_namespace: true
+#     values_files:
+#       - /tmp/values_api.yaml
