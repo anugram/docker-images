@@ -1,13 +1,13 @@
 runlabel: uideployment
 
 deployment:
-  name: ui-deployment
-  appimagename: demo-ui
+  name: kubecon-demo-ui
+  appimagename: frontend
   replicas: 1
-  appimage: localhost:5000/unified-demo-ui
+  appimage: localhost:5000/kubecon-demo-ui
 
 service:
-  name: uisvc
+  name: svc-ui
   type: NodePort
   uiappname: ui-port
   uiappnodePort: 32080

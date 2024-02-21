@@ -1,17 +1,17 @@
 runlabel: appserver
 
 deployment:
-  name: demo-cte-dpg-secrets-api
-  appimagename: demo-backend
-  dpgimagename: dpg-container
+  name: kubecon-demo-api
+  appimagename: api-server
+  dpgimagename: dpg-sidecar
   replicas: 1
-  appimage: localhost:5000/unified-demo-api
+  appimage: localhost:5000/kubecon-demo-api
   dpgimage: thalesciphertrust/ciphertrust-data-protection-gateway:1.1.0
 
 service:
   name: svc-api
   type: NodePort
-  apiappname: app-api-port
+  apiappname: api-port
   apiappnodePort: 32081
   apiappPort: 8080
   apiapptargetPort: 8080
