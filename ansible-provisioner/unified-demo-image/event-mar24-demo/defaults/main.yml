@@ -40,5 +40,5 @@ masking_format_dynamic: "SHOW_LAST_FOUR"
 masking_format_static: "LAST_FOUR"
 
 add_dpg_flag: "{{ ADD_DPG_FLAG }}"
-api_ip: "192.168.2.221"
+api_ip: "{{ SERVER_IP }}"
 api_port: "9000"
