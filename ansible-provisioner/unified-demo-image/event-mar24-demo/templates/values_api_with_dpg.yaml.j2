@@ -13,11 +13,11 @@ service:
   type: NodePort
   apiappname: api-port
   apiappnodePort: 32081
-  apiappPort: 8080
-  apiapptargetPort: 8080
+  apiappPort: 8990
+  apiapptargetPort: 8990
 
 configuration:
-  addSideContainer: false
+  addSideContainer: true
   secretname: dpg-secret
   configmapname: dpg-configmap
   kms: {{ CM_IP }}

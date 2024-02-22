@@ -525,6 +525,7 @@
           - name: "zip"
             operation: "protect"
             protection_policy: "{{ dpg_protection_policy }}"
+      - api_url: "/api/health-info"
         json_response_get_tokens:
           - name: "data.[*].healthCardNum"
             operation: "reveal"
@@ -567,6 +568,8 @@
     CM_STORAGE_GROUP: "{{ storage_group_name }}"
     CM_IP: "{{ cm_ip }}"
     REG_TOKEN: "{{ profile['response']['data']['reg_token'] }}"
+    BACKEND_IP: "{{ api_ip }}"
+    BACKEND_PORT: "{{ api_port }}"
 
 - name: "create namespace YAML file from template"
   template:
@@ -598,10 +601,20 @@
     src: "storage-class.yaml.j2"
     dest: "/tmp/storage-class.yaml"
 
-- name: "copy values.yaml file to tmp directory"
+- name: "copy values.yaml for API service without DPG to tmp directory"
   template:
     src: "values_api.yaml.j2"
     dest: "/tmp/values_api.yaml"
+
+- name: "copy values.yaml for API service with DPG to tmp directory"
+  template:
+    src: "values_api_with_dpg.yaml.j2"
+    dest: "/tmp/values_api_with_dpg.yaml"
+
+- name: "copy values.yaml for Frontend service to tmp directory"
+  template:
+    src: "values_ui.yaml.j2"
+    dest: "/tmp/values_ui.yaml"
 
 # - name: Create NameSpace first
 #   kubernetes.core.k8s:
