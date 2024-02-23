@@ -5,6 +5,8 @@ deployment:
   appimagename: frontend
   replicas: 1
   appimage: localhost:5000/kubecon-demo-ui
+  #pullPolicy: IfNotPresent 
+  pullPolicy: Always
 
 service:
   name: svc-ui

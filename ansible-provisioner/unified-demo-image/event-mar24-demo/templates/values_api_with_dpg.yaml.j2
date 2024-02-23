@@ -7,6 +7,8 @@ deployment:
   replicas: 1
   appimage: localhost:5000/kubecon-demo-api
   dpgimage: thalesciphertrust/ciphertrust-data-protection-gateway:1.1.0
+  #pullPolicy: IfNotPresent 
+  pullPolicy: Always
 
 service:
   name: svc-api
