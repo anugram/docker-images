@@ -4,9 +4,9 @@ deployment:
   name: kubecon-demo-ui
   appimagename: frontend
   replicas: 1
-  appimage: localhost:5000/kubecon-demo-ui
-  #pullPolicy: IfNotPresent 
-  pullPolicy: Always
+  appimage: ciphertrust/learn:demo-dpg-cte-secrets-ui
+  pullPolicy: IfNotPresent
+  #pullPolicy: Always
 
 service:
   name: svc-ui

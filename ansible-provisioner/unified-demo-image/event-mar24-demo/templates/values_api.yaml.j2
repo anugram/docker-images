@@ -5,10 +5,10 @@ deployment:
   appimagename: api-server
   dpgimagename: dpg-sidecar
   replicas: 1
-  appimage: localhost:5000/kubecon-demo-api
+  appimage: ciphertrust/learn:demo-dpg-cte-secrets-api
   dpgimage: thalesciphertrust/ciphertrust-data-protection-gateway:1.1.0
-  #pullPolicy: IfNotPresent 
-  pullPolicy: Always
+  pullPolicy: IfNotPresent 
+  #pullPolicy: Always
 
 service:
   name: svc-api
