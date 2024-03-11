@@ -567,6 +567,7 @@
     CM_CTE_POLICY: "{{ csi_policy_name }}"
     CM_STORAGE_GROUP: "{{ storage_group_name }}"
     CM_IP: "{{ cm_ip }}"
+    NFS_IP: "{{ nfs_ip }}"
     REG_TOKEN: "{{ profile['response']['data']['reg_token'] }}"
     BACKEND_IP: "{{ api_ip }}"
     BACKEND_PORT: "{{ api_port }}"
