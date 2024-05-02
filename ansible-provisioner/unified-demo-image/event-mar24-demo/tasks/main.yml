@@ -572,6 +572,11 @@
     BACKEND_IP: "{{ api_ip }}"
     BACKEND_PORT: "{{ api_port }}"
 
+- name: "create shell script for creating akeyless Reg Token secrets"
+  template:
+    src: "akelyess-create-secrets.sh.j2"
+    dest: "/tmp/akelyess-create-secrets.sh"
+
 - name: "create namespace YAML file from template"
   template:
     src: "namespace.yaml.j2"
