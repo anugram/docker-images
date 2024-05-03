@@ -574,8 +574,8 @@
 
 - name: "create shell script for creating akeyless Reg Token secrets"
   template:
-    src: "akelyess-create-secrets.sh.j2"
-    dest: "/tmp/akelyess-create-secrets.sh"
+    src: "akeyless-create-secrets.sh.j2"
+    dest: "/tmp/akeyless-create-secrets.sh"
 
 - name: "create namespace YAML file from template"
   template:
