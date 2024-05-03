@@ -571,11 +571,18 @@
     REG_TOKEN: "{{ profile['response']['data']['reg_token'] }}"
     BACKEND_IP: "{{ api_ip }}"
     BACKEND_PORT: "{{ api_port }}"
+    AKL_ACCESS_ID: "{{ akl_access_id }}"
+    AKL_ACCESS_KEY: "{{ akl_access_key }}"
 
 - name: "create shell script for creating akeyless Reg Token secrets"
   template:
     src: "akeyless-create-secrets.sh.j2"
     dest: "/tmp/akeyless-create-secrets.sh"
+
+- name: "create Akelyess Helm chart's values.yaml file"
+  template:
+    src: "akeyless-helm-values.yaml.j2"
+    dest: "/tmp/akeyless-helm-values.yaml"
 
 - name: "create namespace YAML file from template"
   template:
