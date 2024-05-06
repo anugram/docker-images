@@ -579,10 +579,10 @@
     src: "akeyless-create-secrets.sh.j2"
     dest: "/tmp/akeyless-create-secrets.sh"
 
-- name: "create Akelyess Helm chart's values.yaml file"
-  template:
-    src: "akeyless-helm-values.yaml.j2"
-    dest: "/tmp/akeyless-helm-values.yaml"
+# - name: "create Akelyess Helm chart's values.yaml file"
+#   template:
+#     src: "akeyless-helm-values.yaml.j2"
+#     dest: "/tmp/akeyless-helm-values.yaml"
 
 - name: "create namespace YAML file from template"
   template:
