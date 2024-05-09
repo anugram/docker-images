@@ -559,6 +559,18 @@
     localNode: "{{ cm_connection_string }}"
   register: profile
 
+# All the work for setting up CSM to work with kubernetes as external secrets store
+- name: "Create CSR"
+  thalesgroup.ciphertrust.dpg_client_profile_save:
+    op_type: create-csr-key
+    cn: "CipherTrust Root CA"
+    algorithm: RSA
+    ipAddresses:
+      - "{{ cm_ip }}"
+    size: 2048
+    localNode: "{{ cm_connection_string }}"
+  register: profile
+
 - name: set vars for helm chart values
   set_fact:
     NAMESPACE: "{{ kubernetes_namespace }}"
@@ -573,6 +585,7 @@
     BACKEND_PORT: "{{ api_port }}"
     AKL_ACCESS_ID: "{{ akl_access_id }}"
     AKL_ACCESS_KEY: "{{ akl_access_key }}"
+    CA_BUNDLE: "{{ cm_ca_bundle }}"
 
 - name: "create shell script for creating akeyless Reg Token secrets"
   template:
@@ -583,6 +596,21 @@
 #   template:
 #     src: "akeyless-helm-values.yaml.j2"
 #     dest: "/tmp/akeyless-helm-values.yaml"
+
+- name: "create YAML file for akeyless credentials"
+  template:
+    src: "akeyless-auth-secret.yaml.j2"
+    dest: "/tmp/akeyless-auth-secret.yaml"
+
+- name: "create YAML file for creating akeyless secrets store"
+  template:
+    src: "akl-external-secret-store.yaml.j2"
+    dest: "/tmp/akl-external-secret-store.yaml"
+
+- name: "create YAML for creating external secret as CTE registration token"
+  template:
+    src: "akl-external-secret.yaml.j2"
+    dest: "/tmp/akl-external-secret.yaml"
 
 - name: "create namespace YAML file from template"
   template:
