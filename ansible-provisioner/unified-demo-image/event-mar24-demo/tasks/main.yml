@@ -561,15 +561,59 @@
 
 # All the work for setting up CSM to work with kubernetes as external secrets store
 - name: "Create CSR"
-  thalesgroup.ciphertrust.dpg_client_profile_save:
+  thalesgroup.ciphertrust.cm_certificate_authority:
     op_type: create-csr-key
-    cn: "CipherTrust Root CA"
+    cn: "Akeyless Server"
     algorithm: RSA
     ipAddresses:
       - "{{ cm_ip }}"
     size: 2048
     localNode: "{{ cm_connection_string }}"
-  register: profile
+  register: CSR
+
+- name: "Sign CSR and Issue Certificate from CM Local CA"
+  thalesgroup.ciphertrust.cm_certificate_authority:
+    op_type: issue-cert
+    id: "{{ ca_id }}"
+    csr: "{{ CSR['response']['data']['csr'] }}"
+    purpose: server
+    duration: 365
+    name: "akl-server.crt"
+    localNode: "{{ cm_connection_string }}"
+  register: Certificate
+
+- name: "Upload cert and key on the interface"
+  thalesgroup.ciphertrust.interface_actions:
+    op_type: put_certificate
+    interface_id: web
+    certificate: "{{ Certificate['response']['data']['cert'] + CSR['response']['data']['key'] }}"
+    generate: false
+    format: PEM
+    localNode: "{{ cm_connection_string }}"
+  register: Interface
+
+- name: "Restart CM Web Service"
+  thalesgroup.ciphertrust.cm_services:
+    op_type: restart
+    services:
+      - "web"
+    localNode: "{{ cm_connection_string }}"
+  register: service
+
+- name: "Wait for 1 minute for service restart"
+  pause:
+    seconds: 60
+
+- name: "Download CA Bundle for Akelyess integration"
+  thalesgroup.ciphertrust.interface_actions:
+    op_type: get_certificate
+    interface_id: web
+    localNode: "{{ cm_connection_string }}"
+  register: caBundle
+
+- name: Base64 Encode the Certificate Bundle
+  ansible.builtin.shell: echo "{{ caBundle['response']['data']['certificates'] }}" | tr -d '\n' | base64
+  register: cert_encoded
 
 - name: set vars for helm chart values
   set_fact:
@@ -585,7 +629,7 @@
     BACKEND_PORT: "{{ api_port }}"
     AKL_ACCESS_ID: "{{ akl_access_id }}"
     AKL_ACCESS_KEY: "{{ akl_access_key }}"
-    CA_BUNDLE: "{{ cm_ca_bundle }}"
+    CA_BUNDLE: "{{ cert_encoded['stdout'] }}"
 
 - name: "create shell script for creating akeyless Reg Token secrets"
   template:
