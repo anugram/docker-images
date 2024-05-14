@@ -631,6 +631,8 @@
     BACKEND_PORT: "{{ api_port }}"
     AKL_ACCESS_ID: "{{ akl_access_id }}"
     AKL_ACCESS_KEY: "{{ akl_access_key }}"
+    AKEYLESS_API_ACCESS_ID: "{{ akl_access_id }}"
+    AKEYLESS_API_ACCESS_KEY: "{{ akl_access_key }}"
     CA_BUNDLE: "{{ cert_encoded['stdout'] }}"
 
 - name: "create shell script for creating akeyless Reg Token secrets"
