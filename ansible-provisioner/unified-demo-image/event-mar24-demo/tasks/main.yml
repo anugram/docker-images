@@ -563,10 +563,12 @@
 - name: "Create CSR"
   thalesgroup.ciphertrust.cm_certificate_authority:
     op_type: create-csr-key
-    cn: "Akeyless Server"
+    cn: "web.ciphertrustmanager.local"
     algorithm: RSA
     ipAddresses:
       - "{{ cm_ip }}"
+    dnsNames:
+      - "web.ciphertrustmanager.local"
     size: 2048
     localNode: "{{ cm_connection_string }}"
   register: CSR
