@@ -620,7 +620,7 @@
 - name: set vars for helm chart values
   set_fact:
     NAMESPACE: "{{ kubernetes_namespace }}"
-    REG_TOKEN_ENCODED: "{{ reg_token_encoded['stdout'] }}"
+    REG_TOKEN_ENCODED: "{{ _result_create_reg_token['response']['data']['token'] }}"
     CM_STORAGE_CLASS: "{{ storage_class_name }}"
     CM_CTE_POLICY: "{{ csi_policy_name }}"
     CM_STORAGE_GROUP: "{{ storage_group_name }}"
