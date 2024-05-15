@@ -614,7 +614,7 @@
   register: caBundle
 
 - name: Base64 Encode the Certificate Bundle
-  ansible.builtin.shell: echo "{{ caBundle['response']['data']['certificates'] }}" | tr -d '\n' | base64 | tr -d '\n'
+  ansible.builtin.shell: echo "{{ caBundle['response']['data']['certificates'] }}" | base64 | tr -d '\n'
   register: cert_encoded
 
 - name: set vars for helm chart values
