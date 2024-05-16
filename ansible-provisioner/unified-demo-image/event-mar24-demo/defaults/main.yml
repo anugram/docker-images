@@ -15,15 +15,15 @@ cm_connection_string:
   auth_domain_path:
 
 storage_group_name: ansible-storage-group
-csi_policy_name: cte_policy
+csi_policy_name: "cte_policy_{{ COUNTER }}"
 cte_resource_set_name: cte-resource-set
 cte_policy_key_name: cte-key
 kubernetes_namespace: kubecon
 storage_class_name: ansible-storage-class
 
 ca_id: "{{ LOCAL_CA_ID }}"
-dpg_client_profile_name: CC_profile
-dpg_policy_name: CC_Policy
+dpg_client_profile_name: "CC_profile_{{ COUNTER }}"
+dpg_policy_name: "CC_Policy_{{ COUNTER }}"
 dpg_access_policy_name: cc_access_policy
 dpg_plaintext_user_set_name: plainttextuserset
 dpg_masked_user_set_name: maskeduserset
