@@ -14,24 +14,24 @@ cm_connection_string:
   verify: False
   auth_domain_path:
 
-storage_group_name: "ansible-storage-group_{{ COUNTER }}"
-csi_policy_name: "cte_policy_{{ COUNTER }}"
-cte_resource_set_name: "cte-resource-set_{{ COUNTER }}"
-cte_policy_key_name: "cte-key_{{ COUNTER }}"
+storage_group_name: "ansible-storage-group-{{ COUNTER }}"
+csi_policy_name: "cte_policy-{{ COUNTER }}"
+cte_resource_set_name: "cte-resource-set-{{ COUNTER }}"
+cte_policy_key_name: "cte-key-{{ COUNTER }}"
 kubernetes_namespace: kubecon
-storage_class_name: "ansible-storage-class_{{ COUNTER }}"
+storage_class_name: "ansible-storage-class-{{ COUNTER }}"
 
 ca_id: "{{ LOCAL_CA_ID }}"
-dpg_client_profile_name: "CC_profile_{{ COUNTER }}"
-dpg_policy_name: "CC_Policy_{{ COUNTER }}"
-dpg_access_policy_name: "cc_access_policy_{{ COUNTER }}"
-dpg_plaintext_user_set_name: "plainttextuserset_{{ COUNTER }}"
-dpg_masked_user_set_name: "maskeduserset_{{ COUNTER }}"
-dpg_protection_policy: "ansible_protectionPolicy_{{ COUNTER }}"
-dpg_cc_protection_policy: "CC_ProtectionPolicy_{{ COUNTER }}"
-dpg_char_set_name: "DPGAlphaNum_{{ COUNTER }}"
+dpg_client_profile_name: "CC_profile-{{ COUNTER }}"
+dpg_policy_name: "CC_Policy-{{ COUNTER }}"
+dpg_access_policy_name: "cc_access_policy-{{ COUNTER }}"
+dpg_plaintext_user_set_name: "plainttextuserset-{{ COUNTER }}"
+dpg_masked_user_set_name: "maskeduserset-{{ COUNTER }}"
+dpg_protection_policy: "ansible_protectionPolicy-{{ COUNTER }}"
+dpg_cc_protection_policy: "CC_ProtectionPolicy-{{ COUNTER }}"
+dpg_char_set_name: "DPGAlphaNum-{{ COUNTER }}"
 nae_port_number: 9005
-dpg_key_name: "DPGKey_{{ COUNTER }}"
+dpg_key_name: "DPGKey-{{ COUNTER }}"
 dpg_key_owner_username: admin
 dpg_key_size: 256
 dpg_key_algo: aes
